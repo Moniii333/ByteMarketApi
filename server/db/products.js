@@ -47,27 +47,47 @@ async function createProduct({ name, description, price, imgUrl, category }){
     throw error;
   }}
 
-async function updateProduct({id, ...fields}){
-  try {
-    const toUpdate = {}
-    for(let column in fields) {
-      if(fields[column] !== undefined) toUpdate[column] = fields[column];
+  async function updateProduct({ id, ...fields }) {
+    try {
+      // Filter out invalid column names
+      const validColumns = ['name', 'description', 'price', 'imgUrl', 'category'];
+      const validFields = Object.keys(fields).filter((key) => validColumns.includes(key));
+      
+      // Generate the SET clause
+      const setClause = validFields.map((key, index) => `${key} = $${index + 1}`).join(', ');
+  
+      if (setClause.length > 0) {
+        // Log the generated SQL query and parameters for debugging
+        console.log('Update query:', `
+          UPDATE products
+          SET ${setClause}
+          WHERE id = $${validFields.length + 1}
+          RETURNING *;
+        `);
+        console.log('Query parameters:', validFields.map((key) => fields[key]), id);
+  
+        // Execute the query
+        const query = `
+          UPDATE products
+          SET ${setClause}
+          WHERE id = $${validFields.length + 1}
+          RETURNING *;
+        `;
+        const values = validFields.map((key) => fields[key]).concat(id);
+        const { rows } = await client.query(query, values);
+  
+        return rows[0];
+      } else {
+        // If no valid fields to update, return null or handle accordingly
+        return null;
+      }
+    } catch (error) {
+      throw error;
     }
-    let product;
-    if (util.dbFields(toUpdate).insert.length > 0) {
-      const {rows} = await client.query(`
-        UPDATE products
-        SET ${ util.dbFields(toUpdate).insert }
-        WHERE id=${ id }
-        RETURNING *;
-      `, Object.values(toUpdate));
-      product = rows[0];
-    }
-    return product;
-  } catch (error) {
-    throw error
   }
-}
+  
+  
+  
 
 async function destroyProduct(id) {
   try {

@@ -15,6 +15,17 @@ router.get('/', async (req, res, next) => {
   }
 })
 
+// GET /api/products/:productId
+router.get('/:productId', async (req, res, next) => {
+  try {
+    const {productId} = req.params;
+    const products = await getProductById(productId);
+    res.send(products);
+  } catch (error) {
+    next(error)
+  }
+})
+
 // POST /api/products/add
 router.post('/', requireUser, requiredNotSent({requiredParams: ['name', 'description', 'price', 'imgUrl', 'category']}), async (req, res, next) => {
   try {
@@ -40,43 +51,43 @@ router.post('/', requireUser, requiredNotSent({requiredParams: ['name', 'descrip
 });
 
 // PATCH /api/products/:productId
-router.patch('/:productId', requireUser, requiredNotSent({requiredParams: ['name', 'description', 'price', 'imgUrl', 'category'], atLeastOne: true}), async (req, res, next) => {
+router.patch('/:productId', requireUser, requiredNotSent({ requiredParams: ['name', 'description', 'price', 'imgUrl', 'category'], atLeastOne: true }), async (req, res, next) => {
   try {
-    const validCategories = ['tablet', 'phone', 'monitor', 'setup', 'headphones', 'charger']
-    const {name, description, price, imgUrl, category} = req.body;
-    const {productId} = req.params;
+    const validCategories = ['tablet', 'phone', 'monitor', 'setup', 'headphones', 'charger'];
+    const { category } = req.body;
+    const { productId } = req.params;
+
     const productToUpdate = await getProductById(productId);
-    if(!validCategories.includes(category)){
-      const error = new Error('Category is invalid')
-      next(error)
-      return
+
+    if (!validCategories.includes(category)) {
+      const error = new Error('Category is invalid');
+      next(error);
+      return;
     }
-    if(!productToUpdate) {
+
+    if (!productToUpdate) {
       next({
         name: 'NotFound',
-        message: `No product by ID ${productId}`
-      })
-    } else if(req.user.id !== productToUpdate.creatorId) {
-      res.status(403);
-      next({
-        name: "WrongUserError",
-        message: "You must be the same user who created this product to perform this action"
+        message: `No product by ID ${productId}`,
       });
     } else {
-      const updatedProduct = await updateProduct({id: productId, name, description, price, imgUrl, category});
-      if(updatedProduct) {
+      const updatedProduct = await updateProduct({ id: productId, ...req.body }); // Use req.body directly
+
+      if (updatedProduct) {
         res.send(updatedProduct);
       } else {
         next({
           name: 'FailedToUpdate',
-          message: 'There was an error updating your product'
-        })
+          message: 'There was an error updating your product',
+        });
       }
     }
   } catch (error) {
     next(error);
   }
 });
+
+
 
 // DELETE /api/products/:productId
 router.delete('/:productId', requireUser, async (req, res, next) => {
@@ -88,12 +99,6 @@ router.delete('/:productId', requireUser, async (req, res, next) => {
         name: 'NotFound',
         message: `No product by ID ${productId}`
       })
-    } else if(req.user.id !== productToUpdate.creatorId) {
-      res.status(403);
-      next({
-        name: "WrongUserError",
-        message: "You must be the same user who created this product to perform this action"
-      });
     } else {
       const deletedRoutine = await destroyProduct(productId)
       res.send({success: true, ...deletedRoutine});
