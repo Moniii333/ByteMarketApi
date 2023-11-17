@@ -27,6 +27,11 @@ server.use('/api', apiRouter);
 const client = require('./db/client');
 client.connect();
 
+server.use((err, req, res, next) => {
+  console.error(err); // Log the error details
+  res.status(500).send('Internal Server Error');
+});
+
 server.listen(PORT, () => {
   console.log("The server is up on port", PORT);
 });
