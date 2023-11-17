@@ -71,7 +71,7 @@ async function createInitialUsers() {
       { username: 'phoreal14', password: 'Garren7', email: 'phoreal@ByteMarket.com' },
       { username: 'jnett93', password: 'Jonathan9', email: 'jnett@ByteMarket.com' },
       { username: 'rachel', password: 'rachel-watkins', email: 'rachel-watkins@ByteMarket.com' },
-      { username: 'JohnDoe1', password: 'Testing1', email: 'DoeEyedJohn@example.com' },
+      { username: 'Admin', password: 'Admin123', email: 'bmadmin@ByteMarket.com' },
     ]
     const users = await Promise.all(usersToCreate.map(createUser));
 
