@@ -28,7 +28,7 @@ const client = require('./db/client');
 client.connect();
 
 server.use((err, req, res, next) => {
-  console.error(err); // Log the error details
+  console.error(err);
   res.status(500).send('Internal Server Error');
 });
 
