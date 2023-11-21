@@ -9,10 +9,6 @@ const { getUserById } = require('../db/users');
 router.post('/create-checkout-session/:id', async (req, res) => {
   const items = req.body.items
 
-  if(!items || !Array.isArray(items)) {
-    return res.status(400).json({ error: 'Items must be an array in request body'})
-  }
-
   // proceed to process items
   const lineItems = items.map(item => ({
     price_data: {
