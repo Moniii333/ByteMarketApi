@@ -4,11 +4,16 @@ const express = require('express');
 const cors = require('cors');
 const server = express();
 
-// Configure CORS
-server.use(cors())
+// Parse JSON and URL-encoded data
+server.use(express.json())
+server.use(express.urlencoded({ extended: true }))
 
-const bodyParser = require('body-parser');
-server.use(bodyParser.json());
+// Configure CORS
+server.use(cors({
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}))
 
 server.use((req, res, next) => {
   console.log("<____Body Logger START____>");
