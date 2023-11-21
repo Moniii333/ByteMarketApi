@@ -7,6 +7,8 @@ const { getUserById } = require('../db/users');
 
 // /stripe/create-checkout-session
 router.post('/create-checkout-session/:id', async (req, res) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   const items = req.body.items
 
   // proceed to process items
@@ -20,6 +22,7 @@ router.post('/create-checkout-session/:id', async (req, res) => {
     },
     quantity: item.quantity,
   }))
+  console.log('Received products:', lineItems)
 
   const userId = req.params.id
   const user = getUserById(userId)
