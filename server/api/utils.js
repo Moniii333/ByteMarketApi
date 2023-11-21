@@ -1,5 +1,5 @@
 function requireUser(req, res, next) {
-  if (!req.user) {
+  if (!req.user || !req.user.id) {
     res.status(401);
     next({
       name: "MissingUserError",

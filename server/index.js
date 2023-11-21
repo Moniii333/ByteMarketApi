@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const server = express();
 
+
 const corsOptions = {
   origin: 'http://localhost:5173',
 }
@@ -23,6 +24,9 @@ server.use((req, res, next) => {
 
 const apiRouter = require('./api');
 server.use('/api', apiRouter);
+
+const stripeRoutes = require('./api/stripe')
+server.use('/stripe', stripeRoutes)
 
 const client = require('./db/client');
 client.connect();
