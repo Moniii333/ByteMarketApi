@@ -6,31 +6,29 @@ const stripeKey = process.env.STRIPE_SECRET_KEY;
 const stripe = require('stripe')(stripeKey);
 const { getUserById } = require('../db/users');
 
-// router.use(requireUser)
+router.use(requireUser)
 
 // /stripe/create-checkout-session
 router.post('/create-checkout-session/:id', async (req, res) => {
   const items = req.body.items
-  console.log('items:', items)
-  let lineItems = []
-  items.forEach((item) => {
-    console.log('price:', item.price_data.unit_amount)
-    lineItems.push(
-      {
-        price_data: {
-          currency: 'usd',
-          product: item.id,
-          unit_amount: item.unit_amount * 100,
-          product_data: {
-            name: item.name,
-          }
-        },
-        quantity: item.quantity,
-      })
-  })
+
+  if(!items || !Array.isArray(items)) {
+    return res.status(400).json({ error: 'Items must be an array in request body'})
+  }
+
+  // proceed to process items
+  const lineItems = items.map(item => ({
+    price_data: {
+      currency: item.price_data.currency,
+      unit_amount: item.price_data.unit_amount * 100,
+      product_data: {
+        name: item.price_data.product_data.name,
+      },
+    },
+    quantity: item.quantity,
+  }))
 
   const userId = req.params.id
-  console.log('user:', userId)
   const user = getUserById(userId)
 
   const session = await stripe.checkout.sessions.create({
