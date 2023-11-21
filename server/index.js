@@ -4,12 +4,8 @@ const express = require('express');
 const cors = require('cors');
 const server = express();
 
-
-const corsOptions = {
-  origin: 'http://localhost:5173',
-}
 // Configure CORS
-server.use(cors(corsOptions))
+server.use(cors())
 
 const bodyParser = require('body-parser');
 server.use(bodyParser.json());
