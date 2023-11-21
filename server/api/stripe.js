@@ -1,12 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { requireUser } = require('./utils');
 require('dotenv').config();
 const stripeKey = process.env.STRIPE_SECRET_KEY;
 const stripe = require('stripe')(stripeKey);
 const { getUserById } = require('../db/users');
-
-router.use(requireUser)
 
 // /stripe/create-checkout-session
 router.post('/create-checkout-session/:id', async (req, res) => {
