@@ -7,15 +7,14 @@ const { getUserById } = require('../db/users');
 
 // /stripe/create-checkout-session
 router.post('/create-checkout-session/:id', async (req, res) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  try{
   const items = req.body.items
 
   // proceed to process items
   const lineItems = items.map(item => ({
     price_data: {
       currency: item.price_data.currency,
-      unit_amount: item.price_data.unit_amount * 100,
+      unit_amount: item.price_data.unit_amount,
       product_data: {
         name: item.price_data.product_data.name,
       },
@@ -39,6 +38,11 @@ router.post('/create-checkout-session/:id', async (req, res) => {
   res.send(JSON.stringify({
     url: session.url
   }))
+  
+  }catch(error){
+  console.error('Error processing checkout:', error)
+  res.status(500).send('Internal server error')
+  }
 })
 
 module.exports = router
