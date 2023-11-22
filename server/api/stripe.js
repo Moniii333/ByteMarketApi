@@ -7,7 +7,6 @@ const { getUserById } = require('../db/users');
 
 // /stripe/create-checkout-session
 router.post('/create-checkout-session/:id', async (req, res) => {
-  console.info('Received product request:', req.body)
   try{
   const items = req.body
     console.info('items:', items)
@@ -15,14 +14,13 @@ router.post('/create-checkout-session/:id', async (req, res) => {
   const lineItems = items.map(item => ({
     price_data: {
       currency: item.price_data.currency,
-      unit_amount: item.price_data.unit_amount,
+      unit_amount: item.price_data.unit_amount * 100,
       product_data: {
         name: item.price_data.product_data.name,
       },
     },
     quantity: item.quantity,
   }))
-  console.log('Mapped items products:', lineItems)
 
   const userId = req.params.id
   const user = getUserById(userId)
@@ -35,7 +33,6 @@ router.post('/create-checkout-session/:id', async (req, res) => {
     success_url: 'http://localhost:5173/success',
     cancel_url: 'http://localhost:5173/cancel'
   })
-  console.log('session:', session)
   res.send(JSON.stringify({
     url: session.url
   }))
