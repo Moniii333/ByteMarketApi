@@ -7,9 +7,10 @@ const { getUserById } = require('../db/users');
 
 // /stripe/create-checkout-session
 router.post('/create-checkout-session/:id', async (req, res) => {
+  console.info('Received product request:', req.body)
   try{
   const items = req.body.items
-
+    console.info('items:', items)
   // proceed to process items
   const lineItems = items.map(item => ({
     price_data: {
@@ -21,7 +22,7 @@ router.post('/create-checkout-session/:id', async (req, res) => {
     },
     quantity: item.quantity,
   }))
-  console.log('Received products:', lineItems)
+  console.log('Mapped items products:', lineItems)
 
   const userId = req.params.id
   const user = getUserById(userId)
@@ -34,11 +35,11 @@ router.post('/create-checkout-session/:id', async (req, res) => {
     success_url: 'http://localhost:5173/success',
     cancel_url: 'http://localhost:5173/cancel'
   })
-
+  console.log('session:', session)
   res.send(JSON.stringify({
     url: session.url
   }))
-  
+
   }catch(error){
   console.error('Error processing checkout:', error)
   res.status(500).send('Internal server error')
