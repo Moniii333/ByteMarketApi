@@ -9,7 +9,7 @@ const { getUserById } = require('../db/users');
 router.post('/create-checkout-session/:id', async (req, res) => {
   console.info('Received product request:', req.body)
   try{
-  const items = req.body.items
+  const items = req.body
     console.info('items:', items)
   // proceed to process items
   const lineItems = items.map(item => ({
