@@ -86,7 +86,7 @@ async function createInitialUsers() {
 async function createShippingInfo() {
   try{
     const shipmentInfo = [
-      { user_id: 4, first_name: 'John', last_name: 'Doe', address: '42 Wallaby Way, Sydney'},
+      { user_id: 5, first_name: 'John', last_name: 'Doe', address: '42 Wallaby Way, Sydney'},
     ]
     const info = await Promise.all(shipmentInfo.map(info => addUserShippingInfo(info.user_id, info)));
     console.log('Shipment info created:', info)

@@ -117,7 +117,6 @@ async function getAllRegisteredUsers() {
     const userHasShippingInfo = await Promise.all(
       rows.map(async (user) => {
         const shipInfo = await selectUserShipmentInfo(user.id)
-        console.log('shipment info:', shipInfo)
         return { ...user, shipInfo }
       })
     )
