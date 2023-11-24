@@ -117,7 +117,7 @@ router.get('/me', requireUser, async (req, res, next) => {
     const userData = req.user
 
     // get users shipment info if any
-    const shippingInfo = await selectUserShipmentInfo({ user_id: userId})
+    const shippingInfo = await selectUserShipmentInfo(userId)
 
     if(!shippingInfo) {
       res.send(userData)
