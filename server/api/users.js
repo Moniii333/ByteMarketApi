@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const { createUser, getUserByUsername, getUser, getUserById, addUserShippingInfo, selectUserShipmentInfo } = require('../db');
+const { createUser, getUserByUsername, getUser, getUserById, addUserShippingInfo, selectUserShipmentInfo, getAllRegisteredUsers } = require('../db');
 const { requireUser } = require('./utils');
 const { JWT_SECRET = 'neverTell' } = process.env;
 const validator = require('validator');
@@ -129,5 +129,16 @@ router.get('/me', requireUser, async (req, res, next) => {
   }
 })
 
+// /api/users/allusers
+router.get('/allusers', requireUser, async (req, res, next) => {
+  try{
+    const allUsers = await getAllRegisteredUsers()
+    if(allUsers){
+      res.send(allUsers)
+    }
+  }catch(error){
+    next(error)
+  }
+})
 
 module.exports = router;

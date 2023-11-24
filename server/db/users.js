@@ -2,9 +2,6 @@ const client = require('./client');
 const bcrypt = require('bcrypt');
 const SALT_COUNT = 10;
 
-
-// database functions
-
 // user functions
 async function createUser({ username, password, email }) {
   const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
@@ -103,9 +100,35 @@ async function selectUserShipmentInfo(data) {
       FROM shipping_information
       WHERE user_id = $1
     `, [data.user_id])
-    return rows
+
+    if(rows.length > 0){
+      return rows[0]
+    }else{
+      return 'Customer has not filled out shipping info'
+    }
   }catch(error){
     console.error(error)
+  }
+}
+
+async function getAllRegisteredUsers() {
+  try {
+    const { rows } = await client.query(`
+      SELECT *
+      FROM users;
+    `)
+
+    // fetch available shipping info
+    const userHasShippingInfo = await Promise.all(
+      rows.map(async (user) => {
+        const shipInfo = await selectUserShipmentInfo(user.id)
+        return { ...user, shipInfo }
+      })
+    )
+      return userHasShippingInfo
+  }catch(error){
+    console.error(error)
+    throw error
   }
 }
 
@@ -116,4 +139,5 @@ module.exports = {
   getUserByUsername,
   addUserShippingInfo,
   selectUserShipmentInfo,
+  getAllRegisteredUsers
 }
