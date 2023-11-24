@@ -9,7 +9,7 @@ server.use(express.json())
 server.use(express.urlencoded({ extended: true }))
 
 // Configure CORS
-server.use(cors({ origin: 'http://localhost:5173' }))
+server.use(cors({ origin: 'https://bytemarket.netlify.app' }))
 
 server.use((req, res, next) => {
   console.log("<____Body Logger START____>");
