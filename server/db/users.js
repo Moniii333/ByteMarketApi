@@ -100,12 +100,7 @@ async function selectUserShipmentInfo(data) {
       FROM shipping_information
       WHERE user_id = $1
     `, [data.user_id])
-
-    if(rows.length > 0){
-      return rows[0]
-    }else{
-      return 'Customer has not filled out shipping info'
-    }
+    return rows
   }catch(error){
     console.error(error)
   }
