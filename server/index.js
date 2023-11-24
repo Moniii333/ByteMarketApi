@@ -4,11 +4,6 @@ const express = require('express');
 const cors = require('cors');
 const server = express();
 
-server.use((req, res, next) => {
-  console.log('Incoming Request:', req.headers)
-  next()
-})
-
 // Parse JSON and URL-encoded data
 server.use(express.json())
 server.use(express.urlencoded({ extended: true }))

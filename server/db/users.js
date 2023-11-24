@@ -98,8 +98,8 @@ async function selectUserShipmentInfo(data) {
     const { rows } = await client.query(`
       SELECT *
       FROM shipping_information
-      WHERE user_id = $1
-    `, [data.user_id])
+      WHERE user_id = $1;
+    `, [data])
     return rows
   }catch(error){
     console.error(error)
@@ -116,7 +116,9 @@ async function getAllRegisteredUsers() {
     // fetch available shipping info
     const userHasShippingInfo = await Promise.all(
       rows.map(async (user) => {
+        console.log('user:', user)
         const shipInfo = await selectUserShipmentInfo(user.id)
+        console.log('shipment info:', shipInfo)
         return { ...user, shipInfo }
       })
     )
