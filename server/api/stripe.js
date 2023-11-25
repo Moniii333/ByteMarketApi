@@ -30,8 +30,8 @@ router.post('/create-checkout-session/:id', async (req, res) => {
     client_reference_id: user.username,
     line_items: lineItems,
     mode: 'payment',
-    success_url: 'http://localhost:5173/success',
-    cancel_url: 'http://localhost:5173/cancel'
+    success_url: 'https://bytemarket.netlify.app/success',
+    cancel_url: 'https://bytemarket.netlify.app/cancel'
   })
   res.send(JSON.stringify({
     url: session.url
